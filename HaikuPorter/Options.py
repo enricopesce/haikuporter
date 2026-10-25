@@ -231,6 +231,11 @@ def parseOptions():
 						   'cross-building at all) is the one to be found in '
 						   '"/boot/system/develop/cross" matching the target '
 						   'architecture')
+	advanced_flags.add_option('--cross-runtime-package',
+					  action='store', type='string', dest='crossRuntimePackage',
+					  default=None,
+					  help='path to a target Haiku runtime package to activate '
+						   'alongside the cross development sysroot package')
 	advanced_flags.add_option('--secondary-cross-devel-packages',
 					  action='callback', callback=setCommaSeparatedList,
 					  type='string', dest='secondaryCrossDevelPackages',

@@ -276,6 +276,7 @@ class BuildPlatformUnix(BuildPlatform):
 			}
 
 		self.crossDevelPackage = Configuration.getCrossDevelPackage()
+		self.crossRuntimePackage = Configuration.getCrossRuntimePackage()
 		targetArchitecture = Configuration.getTargetArchitecture()
 		if targetArchitecture is None:
 			sysExit('TARGET_ARCHITECTURE must be set in configuration on this '
@@ -437,6 +438,13 @@ class BuildPlatformUnix(BuildPlatform):
 		crossDevelPackage = self._getCrossDevelPackage(secondaryArchitecture)
 		print('Activating haiku_cross_devel_sysroot package: ' + crossDevelPackage)
 		self._activatePackage(crossDevelPackage, sysrootDir, '/boot/system')
+
+		# optionally activate the target runtime package into the sysroot
+		if self.crossRuntimePackage:
+			print('Activating target Haiku runtime package: '
+				+ self.crossRuntimePackage)
+			self._activatePackage(self.crossRuntimePackage, sysrootDir,
+				'/boot/system')
 
 		# extract the required packages
 		for package in requiredPackages:

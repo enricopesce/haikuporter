@@ -77,6 +77,15 @@ haikuportsAttributes = {
 		'optionAttribute': 'crossDevelPackage',
 		'setAttribute': 'crossDevelPackage',
 	},
+	'CROSS_RUNTIME_PACKAGE': {
+		'type': bytes,
+		'required': False,
+		'default': None,
+		'extendable': Extendable.NO,
+		'indexable': False,
+		'optionAttribute': 'crossRuntimePackage',
+		'setAttribute': 'crossRuntimePackage',
+	},
 	'CROSS_TOOLS': {
 		'type': bytes,
 		'required': False,
@@ -285,6 +294,7 @@ class Configuration(object):
 		self.crossTools = None
 		self.secondaryCrossTools = {}
 		self.crossDevelPackage = None
+		self.crossRuntimePackage = None
 		self.secondaryCrossDevelPackages = None
 		self.outputDirectory = None
 		self.repositoryPath = None
@@ -413,6 +423,10 @@ class Configuration(object):
 	@staticmethod
 	def getCrossDevelPackage():
 		return Configuration.configuration.crossDevelPackage
+
+	@staticmethod
+	def getCrossRuntimePackage():
+		return Configuration.configuration.crossRuntimePackage
 
 	@staticmethod
 	def getSecondaryCrossDevelPackage(architecture):
