@@ -234,7 +234,7 @@ def parseOptions():
 	advanced_flags.add_option('--cross-runtime-package',
 					  action='store', type='string', dest='crossRuntimePackage',
 					  default=None,
-					  help='path to a target Haiku runtime package to activate '
+					  help='path or comma-separated paths to target Haiku runtime packages '
 						   'alongside the cross development sysroot package')
 	advanced_flags.add_option('--secondary-cross-devel-packages',
 					  action='callback', callback=setCommaSeparatedList,

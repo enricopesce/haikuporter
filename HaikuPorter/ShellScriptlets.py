@@ -340,8 +340,22 @@ runConfigure()
 
 	# explicitly set build target for native build (avoid guessing)
 	buildSpec=""
-	if [[ $omitBuildSpec != true && $isCrossRepository != true ]]; then
-		buildSpec="--build=$effectiveTargetMachineTriple"
+	if [[ $omitBuildSpec != true ]]; then
+		if [[ $isCrossRepository == true && $targetArchitecture == arm64 && $portName != *_cross_* ]]; then
+			buildSpec="--build=$buildMachineTriple --host=$effectiveTargetMachineTriple"
+		elif [[ $isCrossRepository != true ]]; then
+			buildSpec="--build=$effectiveTargetMachineTriple"
+		fi
+	fi
+
+	if [[ $isCrossRepository == true && $targetArchitecture == arm64 && $portName != *_cross_* ]]; then
+		if [[ -z $CC ]]; then
+			CC="$(getTargetArchitectureCommand gcc) --sysroot=$crossSysrootDir"
+		fi
+		if [[ -z $CXX ]]; then
+			CXX="$(getTargetArchitectureCommand g++) --sysroot=$crossSysrootDir"
+		fi
+		export CC CXX
 	fi
 
 	$configure $dirArgs $buildSpec $@
@@ -867,6 +881,11 @@ packageDebugInfos()
 }
 
 # source the configuration file
+if [[ $isCrossRepository == true && $targetArchitecture == arm64 && -n $crossSysrootDir ]]; then
+	export CPATH="$crossSysrootDir/boot/system/develop/headers${CPATH:+:$CPATH}"
+	export LIBRARY_PATH="$crossSysrootDir/boot/system/develop/lib:$crossSysrootDir/boot/system/lib${LIBRARY_PATH:+:$LIBRARY_PATH}"
+fi
+
 . $fileToParse >/dev/null
 
 # invoke the requested action

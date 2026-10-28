@@ -564,8 +564,8 @@ class Main(object):
 				else:
 					sys.exit(1)
 
-		if not self.options.ignoreMessages and port.recipeKeys['MESSAGE']:
-			print(port.recipeKeys['MESSAGE'])
+		if not self.options.ignoreMessages and port.recipeKeysByExtension.get('', {}).get('MESSAGE'):
+			print(port.recipeKeysByExtension['']['MESSAGE'])
 			if not self.options.yes:
 				answer = input('Continue (y/n + enter)? ')
 				if answer == '':

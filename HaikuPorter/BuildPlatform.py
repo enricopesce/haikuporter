@@ -299,6 +299,7 @@ class BuildPlatformUnix(BuildPlatform):
 			'cmd:autoreconf',
 			'cmd:awk',
 			'cmd:bash',
+			'cmd:bison',
 			'cmd:cat',
 			'cmd:cmake',
 			'cmd:cmp',
@@ -439,12 +440,16 @@ class BuildPlatformUnix(BuildPlatform):
 		print('Activating haiku_cross_devel_sysroot package: ' + crossDevelPackage)
 		self._activatePackage(crossDevelPackage, sysrootDir, '/boot/system')
 
-		# optionally activate the target runtime package into the sysroot
+		# optionally activate target runtime packages into the sysroot
 		if self.crossRuntimePackage:
-			print('Activating target Haiku runtime package: '
-				+ self.crossRuntimePackage)
-			self._activatePackage(self.crossRuntimePackage, sysrootDir,
-				'/boot/system')
+			for runtimePackage in self.crossRuntimePackage.split(','):
+				runtimePackage = runtimePackage.strip()
+				if not runtimePackage:
+					continue
+				print('Activating target Haiku runtime package: '
+					+ runtimePackage)
+				self._activatePackage(runtimePackage, sysrootDir,
+					'/boot/system')
 
 		# extract the required packages
 		for package in requiredPackages:
