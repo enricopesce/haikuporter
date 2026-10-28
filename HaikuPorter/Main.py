@@ -771,6 +771,12 @@ class Main(object):
 
 		if Configuration.isCrossBuildRepository():
 			self.shellVariables['isCrossRepository'] = 'true'
+			# Build helpers such as GMP's configure probes must run on the
+			# Linux build host, not through the target Haiku cross compiler.
+			self.shellVariables['CC_FOR_BUILD'] = os.environ.get(
+				'CC_FOR_BUILD', 'gcc')
+			self.shellVariables['CXX_FOR_BUILD'] = os.environ.get(
+				'CXX_FOR_BUILD', 'g++')
 
 			buildMachineTriple = buildPlatform.machineTriple
 			targetMachineTriple \
