@@ -483,11 +483,14 @@ class BuildPlatformUnix(BuildPlatform):
 				if os.path.lexists(originalToolsLibDir):
 					os.rename(originalToolsLibDir, toolsLibDir)
 		else:
-			# gcc 4: has a separate sysroot dir -- remove it completely
+			# gcc 4: has a separate sysroot dir. Preserve a symlink here:
+			# it may point to an externally managed sysroot used by the compiler,
+			# and _activateCrossTools() refreshes its per-port develop links.
 			toolsSysrootDir = (
 				self._getOriginalCrossToolsDir(secondaryArchitecture)
 				+ '/sysroot')
-			if os.path.exists(toolsSysrootDir):
+			if os.path.exists(toolsSysrootDir) \
+					and not os.path.islink(toolsSysrootDir):
 				shutil.rmtree(toolsSysrootDir)
 
 		# If the the build went fine, clean up.
