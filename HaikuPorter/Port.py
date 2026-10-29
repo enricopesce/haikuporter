@@ -1623,6 +1623,16 @@ class Port(object):
 		shellEnv = filteredEnvironment()
 		shellEnv.update(env)
 		if Configuration.isCrossBuildRepository():
+			# LIBRARY_PATH may point at the target sysroot; do not expose it to
+			# host build helpers or their configure probes.
+			shellEnv.pop('LIBRARY_PATH', None)
+			# Build helper programs must use host compilers even though the
+			# target cross-tools are prepended to PATH. Export these before the
+			# recipe shell starts so configure scripts inherit them.
+			shellEnv['CC_FOR_BUILD'] = os.environ.get(
+				'HAIKU_PORTER_CC_FOR_BUILD', '/usr/bin/gcc')
+			shellEnv['CXX_FOR_BUILD'] = os.environ.get(
+				'HAIKU_PORTER_CXX_FOR_BUILD', '/usr/bin/g++')
 			# include cross development tools in path automatically
 			crossToolsPaths = buildPlatform.getCrossToolsBinPaths(self.workDir)
 			shellEnv['PATH'] = ':'.join(crossToolsPaths + [shellEnv['PATH']])

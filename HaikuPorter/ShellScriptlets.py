@@ -355,6 +355,8 @@ runConfigure()
 		if [[ -z $CXX ]]; then
 			CXX="$(getTargetArchitectureCommand g++) --sysroot=$crossSysrootDir"
 		fi
+		# Native configure probes must not link against target sysroot libraries.
+		unset LIBRARY_PATH
 		export CC CXX
 	fi
 
@@ -817,6 +819,8 @@ packageEntries()
 		if [[ "$file" = /* ]]; then
 			if [[ "$file" =~ "$installDestDir$prefix"/(.*) ]]; then
 				file=${BASH_REMATCH[1]}
+			elif [[ "$file" =~ "$prefix"/(.*) ]]; then
+				file=${BASH_REMATCH[1]}
 			else
 				echo >&2 "packageEntries: error: absolute entry \"$file\""
 				echo >&2 "doesn't appear to be in \"$installDestDir$prefix\"."
@@ -881,14 +885,16 @@ packageDebugInfos()
 }
 
 # source the configuration file
-if [[ $isCrossRepository == true && $targetArchitecture == arm64 && -n $crossSysrootDir ]]; then
-	export CPATH="$crossSysrootDir/boot/system/develop/headers${CPATH:+:$CPATH}"
-	export LIBRARY_PATH="$crossSysrootDir/boot/system/develop/lib:$crossSysrootDir/boot/system/lib${LIBRARY_PATH:+:$LIBRARY_PATH}"
-fi
-
 . $fileToParse >/dev/null
 
 # invoke the requested action
+if [[ -n $installDestDir ]]; then
+	if [[ -e /packages && ! -L /packages ]]; then
+		echo "/packages exists and is not the cross-build package symlink" >&2
+		exit 1
+	fi
+	ln -sfn "$installDestDir/packages" /packages
+fi
 if [[ $quiet ]]; then
 	$recipeAction >/dev/null
 else

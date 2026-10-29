@@ -313,7 +313,7 @@ def filteredEnvironment():
 		'TERM': 'xterm',
 	}
 
-	for key in ['LIBRARY_PATH', 'PATH']:
+	for key in ['LIBRARY_PATH', 'PATH', 'HAIKU_SOURCE_DIR', 'HAIKU_RESUME_BUILD']:
 		if key in os.environ:
 			env[key] = os.environ[key]
 
